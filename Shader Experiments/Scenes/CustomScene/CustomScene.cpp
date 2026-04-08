@@ -24,15 +24,18 @@ void CustomScene::Draw(const glm::mat4& view, const glm::mat4& projection, const
     }
 }
 
-void CustomScene::OnActivate(ICameraControl* cameraControl)
+void CustomScene::OnActivate(IApplicationContext* appContext)
 {
-    cameraControl->SetCameraConfig(2.5f, 1.0f, 0.0f);
+	this->appContext = appContext;
+    this->appContext->SetCameraConfig(2.5f, 1.0f, 0.0f);
 }
 
 void CustomScene::OnGuiRender()
 {
 	const ImGuiInputTextFlags inputFlags = (ImGuiInputTextFlags_AllowTabInput);
-	ImGui::InputTextMultiline("###Shader Code", textBuffer.data(), textBuffer.size(), ImVec2(-1.0f, 267), inputFlags);
+    float availableHeight = ImGui::GetContentRegionAvail().y;
+    float textBoxHeight = availableHeight - ImGui::GetFrameHeightWithSpacing();
+	ImGui::InputTextMultiline("###Shader Code", textBuffer.data(), textBuffer.size(), ImVec2(-1.0f, textBoxHeight), inputFlags);
 
     if (ImGui::Button("Reset"))
     {
@@ -40,7 +43,15 @@ void CustomScene::OnGuiRender()
     }
 
 	ImGui::SameLine();
-	ImGui::Dummy(ImVec2(116.0f, 0.0f));
+
+    if (ImGui::Button("Swap Window"))
+    {
+        if (appContext)
+        {
+			appContext->ToggleWindowLayout();
+        }
+    }
+
     ImGui::SameLine();
 
     if (ImGui::Button("Complile"))

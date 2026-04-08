@@ -35,7 +35,7 @@ void OtherScene::Draw(const glm::mat4& view, const glm::mat4& projection, const 
     monkeySphere.Draw(rippleShader, view, projection, camPos, time, resolution, 997, 0);
 }
 
-void OtherScene::OnActivate(ICameraControl* cameraControl)
+void OtherScene::OnActivate(IApplicationContext* cameraControl)
 {
     cameraControl->SetCameraConfig(6.0f, 0.2f, 0.5f);
 }

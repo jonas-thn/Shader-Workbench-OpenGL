@@ -18,7 +18,7 @@ void TunnelScene::Draw(const glm::mat4& view, const glm::mat4& projection, const
     }
 }
 
-void TunnelScene::OnActivate(ICameraControl* cameraControl)
+void TunnelScene::OnActivate(IApplicationContext* cameraControl)
 {
     cameraControl->SetCameraConfig(2.5f, 1.0f, 0.0f);
 }

@@ -1,9 +1,11 @@
 #pragma once
 
-class ICameraControl
+class IApplicationContext
 {
 public:
-    virtual ~ICameraControl() = default;
+    virtual ~IApplicationContext() = default;
 
     virtual void SetCameraConfig(float radius, float speed, float height) = 0;
+
+    virtual void ToggleWindowLayout() = 0;
 };

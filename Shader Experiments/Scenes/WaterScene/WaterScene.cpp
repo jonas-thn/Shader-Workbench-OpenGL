@@ -18,7 +18,7 @@ void WaterScene::Draw(const glm::mat4& view, const glm::mat4& projection, const 
     }
 }
 
-void WaterScene::OnActivate(ICameraControl* cameraControl)
+void WaterScene::OnActivate(IApplicationContext* cameraControl)
 {
     cameraControl->SetCameraConfig(2.5f, 1.0f, 0.0f);
 }

@@ -22,7 +22,7 @@ public:
 
     virtual void OnGuiRender() {}
 
-    virtual void OnActivate(ICameraControl* cameraControl) {}
+    virtual void OnActivate(IApplicationContext* cameraControl) {}
 
 protected:
     std::vector<Mesh*> meshList;

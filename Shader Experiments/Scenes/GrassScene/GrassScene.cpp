@@ -32,7 +32,7 @@ void GrassScene::Draw(const glm::mat4& view, const glm::mat4& projection, const 
     grass2.Draw(grassShader, view, projection, camPos, time, resolution, 1, count);
 }
 
-void GrassScene::OnActivate(ICameraControl* cameraControl)
+void GrassScene::OnActivate(IApplicationContext* cameraControl)
 {
     cameraControl->SetCameraConfig(6.0f, 0.3f, 1.5f);
 }

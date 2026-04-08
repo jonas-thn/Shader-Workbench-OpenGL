@@ -54,7 +54,7 @@ void LightingScene::MoveMesh(float& pos, Mesh& mesh, float dt)
     mesh.SetPos(glm::vec3(0.0f, pos, 0.0f));
 }
 
-void LightingScene::OnActivate(ICameraControl* cameraControl)
+void LightingScene::OnActivate(IApplicationContext* cameraControl)
 {
     cameraControl->SetCameraConfig(7.0f, 1.0f, 1.75f);
 }

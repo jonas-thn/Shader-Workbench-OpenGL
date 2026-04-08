@@ -15,7 +15,7 @@
 
 class Scene;
 
-class Application : public ICameraControl
+class Application : public IApplicationContext
 {
 public:
     Application();
@@ -27,6 +27,7 @@ public:
     void Render();
 
     void SetCameraConfig(float radius, float speed, float height) override;
+    void ToggleWindowLayout() override;
 
 public:
     bool running = true;
@@ -39,9 +40,12 @@ private:
 
     void InitFBO(int width, int height);
 	void ResizeFBO(int newWidth, int newHeight);
+    void DrawViewport();
 
 private:
 	std::unique_ptr<GLWindow> window;
+
+    bool isLayoutSwapped = false;
 
     int width = 800;
     int height = 600;

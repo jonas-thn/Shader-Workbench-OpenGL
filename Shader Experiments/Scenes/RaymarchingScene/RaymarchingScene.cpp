@@ -18,7 +18,7 @@ void RaymarchingScene::Draw(const glm::mat4& view, const glm::mat4& projection, 
     }
 }
 
-void RaymarchingScene::OnActivate(ICameraControl* cameraControl)
+void RaymarchingScene::OnActivate(IApplicationContext* cameraControl)
 {
     cameraControl->SetCameraConfig(2.5f, 1.0f, 0.0f);
 }

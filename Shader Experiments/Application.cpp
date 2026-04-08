@@ -148,6 +148,11 @@ void Application::Render()
 
 void Application::DrawGUI()
 {
+    if(activeScene->GetName() != "Custom Shader")
+    {
+		isLayoutSwapped = false;
+    }
+    
     //settings
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
@@ -185,13 +190,29 @@ void Application::DrawGUI()
 
     ImGui::Separator();
     ImGui::Spacing();
-
-    if (activeScene)
-    {
-        ImGui::SeparatorText(activeScene->GetName().c_str());
-        ImGui::Spacing();
     
-        activeScene->OnGuiRender();
+    if(!isLayoutSwapped)
+    {
+        if (activeScene)
+        {
+            ImGui::SeparatorText(activeScene->GetName().c_str());
+            ImGui::Spacing();
+
+            activeScene->OnGuiRender();
+        }
+    }
+    else
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+        ImGui::BeginChild("Small Viewport", ImVec2(-1.0f, -1.0), true, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration
+            | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+        DrawViewport();
+
+        ImGui::EndChild();
+        ImGui::PopStyleVar(2);
     }
 
     ImGui::End();
@@ -200,23 +221,37 @@ void Application::DrawGUI()
     //main window
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::SetNextWindowSize(ImVec2((float)(width - uiWidth), (float)height));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-
-    ImGui::Begin("Scene Viewport", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse
-        | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBringToFrontOnFocus);
-
-    ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-
-    if (viewportPanelSize.x != currentFboWidth || viewportPanelSize.y != currentFboHeight)
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(15.0f, 8.0f));
+    
+    if (isLayoutSwapped)
     {
-        ResizeFBO(static_cast<int>(viewportPanelSize.x), static_cast<int>(viewportPanelSize.y));
+        ImGui::Begin("Test", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration
+            | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+        if (activeScene)
+        {
+            ImGui::SeparatorText(activeScene->GetName().c_str());
+            ImGui::Spacing();
+
+            activeScene->OnGuiRender();
+        }
+
+        ImGui::End();
     }
+    else
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
-    ImGui::Image((void*)(intptr_t)sceneTexture,ImVec2(currentFboWidth, currentFboHeight),ImVec2(0, 1),ImVec2(1, 0));
+        ImGui::Begin("Scene Viewport", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse
+            | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
-    ImGui::End();
-    ImGui::PopStyleVar(2);
+        DrawViewport();
+
+        ImGui::End();
+        ImGui::PopStyleVar(2);
+    }
+    ImGui::PopStyleVar();
 
     ImGui::Render();
 }
@@ -237,6 +272,11 @@ void Application::SetCameraConfig(float radius, float speed, float height)
     this->camRadius = radius;
     this->camSpeed = speed;
     this->cameraHeight = height;
+}
+
+void Application::ToggleWindowLayout()
+{
+	isLayoutSwapped = !isLayoutSwapped; 
 }
 
 void Application::InitImGuiStyle()
@@ -336,4 +376,20 @@ void Application::ResizeFBO(int newWidth, int newHeight)
 	InitFBO(newWidth, newHeight);
 
 	projection = glm::perspective(glm::radians(45.0f), (float)currentFboWidth / (float)currentFboHeight, 0.1f, 100.0f);
+}
+
+void Application::DrawViewport()
+{
+    
+
+    ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+
+    if (viewportPanelSize.x != currentFboWidth || viewportPanelSize.y != currentFboHeight)
+    {
+        ResizeFBO(static_cast<int>(viewportPanelSize.x), static_cast<int>(viewportPanelSize.y));
+    }
+
+    ImGui::Image((void*)(intptr_t)sceneTexture, ImVec2(currentFboWidth, currentFboHeight), ImVec2(0, 1), ImVec2(1, 0));
+
+    
 }

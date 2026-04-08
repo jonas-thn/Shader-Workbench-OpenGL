@@ -15,7 +15,7 @@ public:
 
     std::string GetName() const override { return "Empty"; }
 
-    void OnActivate(ICameraControl* cameraControl) override;
+    void OnActivate(IApplicationContext* cameraControl) override;
 
     void OnGuiRender() override;
 

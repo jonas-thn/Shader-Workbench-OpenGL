@@ -15,13 +15,14 @@ public:
     void Update(float dt) override;
     void Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution) override;
 
-    std::string GetName() const override { return "Custom"; }
-    void OnActivate(ICameraControl* cameraControl) override;
+    std::string GetName() const override { return "Custom Shader"; }
+    void OnActivate(IApplicationContext* cameraControl) override;
     void OnGuiRender() override;
 
 private:
     Shader customShader;
     Mesh screen;
+	IApplicationContext* appContext = nullptr;
 
 	const size_t extraSize = 8192;
     std::vector<char> textBuffer;

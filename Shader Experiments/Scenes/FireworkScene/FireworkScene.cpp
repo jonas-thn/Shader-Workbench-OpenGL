@@ -18,7 +18,7 @@ void FireworkScene::Draw(const glm::mat4& view, const glm::mat4& projection, con
     }
 }
 
-void FireworkScene::OnActivate(ICameraControl* cameraControl)
+void FireworkScene::OnActivate(IApplicationContext* cameraControl)
 {
     cameraControl->SetCameraConfig(2.5f, 1.0f, 0.0f);
 }

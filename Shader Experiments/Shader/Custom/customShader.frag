@@ -6,6 +6,7 @@ in vec3 FragPos;
 
 uniform vec3 cameraPos;
 uniform float time;
+uniform vec2 resolution;
 
 out vec4 FragColor;
 
