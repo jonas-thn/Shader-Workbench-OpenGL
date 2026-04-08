@@ -34,7 +34,7 @@ void GrassScene::Draw(const glm::mat4& view, const glm::mat4& projection, const 
 
 void GrassScene::OnActivate(ICameraControl* cameraControl)
 {
-    cameraControl->SetCameraConfig(7.0f, 0.3f, 2.0f);
+    cameraControl->SetCameraConfig(6.0f, 0.3f, 1.5f);
 }
 
 void GrassScene::OnGuiRender()

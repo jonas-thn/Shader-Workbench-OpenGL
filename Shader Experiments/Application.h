@@ -37,6 +37,9 @@ private:
 
     void InitImGuiStyle();
 
+    void InitFBO(int width, int height);
+	void ResizeFBO(int newWidth, int newHeight);
+
 private:
 	std::unique_ptr<GLWindow> window;
 
@@ -58,4 +61,11 @@ private:
 
     float uiWidthPercent = 0.35f;
     int uiWidth = 0;
+
+    unsigned int fbo = 0;
+	unsigned int sceneTexture = 0;
+    unsigned int rbo = 0;
+
+	int currentFboWidth = 0;
+	int currentFboHeight = 0;
 };

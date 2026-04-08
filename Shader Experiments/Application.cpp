@@ -43,8 +43,6 @@ Application::Application()
     InitImGuiStyle();
 
     glEnable(GL_DEPTH_TEST);
-    uiWidth = static_cast<int>(width * uiWidthPercent);
-    glViewport(-uiWidth, 0, width + uiWidth, height);
 }
 
 Application::~Application()
@@ -56,7 +54,11 @@ Application::~Application()
 
 void Application::Setup()
 {
-    projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+    uiWidth = static_cast<int>(width * uiWidthPercent);
+    int startViewportWidth = width - uiWidth;
+    InitFBO(startViewportWidth, height);
+
+    projection = glm::perspective(glm::radians(45.0f), (float)startViewportWidth / (float)height, 0.1f, 100.0f);
     view = glm::lookAt(glm::vec3(1.0f, 0.0f, 5.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
     sceneList.push_back(std::make_shared<EmptyScene>());
@@ -95,9 +97,7 @@ void Application::ProcessInput()
             {
                 width = event.window.data1;
                 height = event.window.data2;
-                projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
                 uiWidth = static_cast<int>(width * uiWidthPercent);
-                glViewport(-uiWidth, 0, width + uiWidth, height);
             }
         }
     }
@@ -131,25 +131,34 @@ void Application::Update()
 
 void Application::Render()
 {
-    glViewport(-uiWidth, 0, width + uiWidth, height);
-
-    DrawGUI();
+    //pass 1
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glViewport(0, 0, currentFboWidth, currentFboHeight);
     DrawScene();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    //pass 2
+	glViewport(0, 0, width, height);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+    DrawGUI();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     window->SwapBuffers();
 }
 
 void Application::DrawGUI()
 {
+    //settings
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
     ImGui::SetNextWindowPos(ImVec2((float)(width - uiWidth), 0.0f));
     ImGui::SetNextWindowSize(ImVec2((float)uiWidth, (float)height));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(15.0f, 8.0f));
 
-    ImGui::Begin("Shader Editor", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
+    ImGui::Begin("Shader Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration
+        | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
     ImGui::SeparatorText("Select Scene");
 
@@ -186,6 +195,29 @@ void Application::DrawGUI()
     }
 
     ImGui::End();
+    ImGui::PopStyleVar();
+
+    //main window
+    ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+    ImGui::SetNextWindowSize(ImVec2((float)(width - uiWidth), (float)height));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+    ImGui::Begin("Scene Viewport", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse
+        | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+    ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+
+    if (viewportPanelSize.x != currentFboWidth || viewportPanelSize.y != currentFboHeight)
+    {
+        ResizeFBO(static_cast<int>(viewportPanelSize.x), static_cast<int>(viewportPanelSize.y));
+    }
+
+    ImGui::Image((void*)(intptr_t)sceneTexture,ImVec2(currentFboWidth, currentFboHeight),ImVec2(0, 1),ImVec2(1, 0));
+
+    ImGui::End();
+    ImGui::PopStyleVar(2);
+
     ImGui::Render();
 }
 
@@ -255,4 +287,53 @@ void Application::InitImGuiStyle()
     style.Colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0, 0, 0, 0.4f);
     style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.4f);
     style.WindowPadding = ImVec2(20.0f, 20.0f);
+}
+
+void Application::InitFBO(int width, int height)
+{
+	currentFboWidth = width;
+	currentFboHeight = height;
+
+	glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glGenTextures(1, &sceneTexture);
+	glBindTexture(GL_TEXTURE_2D, sceneTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, currentFboWidth, currentFboHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sceneTexture, 0);
+
+    glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, currentFboWidth, currentFboHeight);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        fprintf(stderr, "FBO Error: Framebuffer is not complete\n");
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Application::ResizeFBO(int newWidth, int newHeight)
+{
+    if (newWidth <= 0 || newHeight <= 0)
+    {
+        return;
+    }
+
+    if (newWidth == currentFboWidth && newHeight == currentFboHeight)
+    {
+        return;
+	}
+
+	glDeleteFramebuffers(1, &fbo);
+	glDeleteTextures(1, &sceneTexture);
+	glDeleteRenderbuffers(1, &rbo);
+
+	InitFBO(newWidth, newHeight);
+
+	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 }

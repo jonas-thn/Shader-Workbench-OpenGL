@@ -21,7 +21,7 @@ void EmptyScene::Draw(const glm::mat4& view, const glm::mat4& projection, const 
 
 void EmptyScene::OnActivate(ICameraControl* cameraControl)
 {
-    cameraControl->SetCameraConfig(2.5f, 1.0f, 0.0f);
+    cameraControl->SetCameraConfig(2.0f, 1.0f, 0.0f);
 }
 
 void EmptyScene::OnGuiRender() 
