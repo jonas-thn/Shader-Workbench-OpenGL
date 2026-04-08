@@ -173,6 +173,9 @@
     <ClInclude Include="Scenes\CustomScene\CustomScene.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="UIConfig.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Standard\standardShader.vert" />

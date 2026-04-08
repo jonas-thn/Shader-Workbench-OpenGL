@@ -36,8 +36,6 @@ private:
     void DrawGUI();
     void DrawScene();
 
-    void InitImGuiStyle();
-
     void InitFBO(int width, int height);
 	void ResizeFBO(int newWidth, int newHeight);
     void DrawViewport();

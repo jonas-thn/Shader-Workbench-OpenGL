@@ -189,6 +189,7 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Scenes\TerrainScene\TerrainScene.h" />
     <ClInclude Include="Scenes\WaterScene\WaterScene.h" />
+    <ClInclude Include="UIConfig.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Custom\customDefault.frag" />
