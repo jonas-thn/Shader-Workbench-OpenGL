@@ -27,12 +27,12 @@ OtherScene::OtherScene() :
 
 void OtherScene::Update(float dt) {}
 
-void OtherScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time)
+void OtherScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution)
 {
-    sphereNoise.Draw(noiseShader, view, projection, camPos, time, 0, 0);
-    sphereRipple.Draw(rippleShader, view, projection, camPos, time, 999, 0);
-    monkeyExplode.Draw(rippleShader, view, projection, camPos, time, 998, 0);
-    monkeySphere.Draw(rippleShader, view, projection, camPos, time, 997, 0);
+    sphereNoise.Draw(noiseShader, view, projection, camPos, time, resolution, 0, 0);
+    sphereRipple.Draw(rippleShader, view, projection, camPos, time, resolution, 999, 0);
+    monkeyExplode.Draw(rippleShader, view, projection, camPos, time, resolution, 998, 0);
+    monkeySphere.Draw(rippleShader, view, projection, camPos, time, resolution, 997, 0);
 }
 
 void OtherScene::OnActivate(ICameraControl* cameraControl)

@@ -34,11 +34,11 @@ void LightingScene::Update(float dt)
     MoveMesh(ringPos, ring, dt);
 }
 
-void LightingScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time)
+void LightingScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution)
 {
     for (int i = 0; i < meshList.size(); i++)
     {
-        meshList[i]->Draw(lightingShader, view, projection, camPos, time, i, 0);
+        meshList[i]->Draw(lightingShader, view, projection, camPos, time, resolution, i, 0);
     }
 }
 

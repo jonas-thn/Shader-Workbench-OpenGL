@@ -7,10 +7,10 @@ in vec3 FragPos;
 uniform vec3 cameraPos;
 uniform int index;
 uniform float time;
+uniform vec2 resolution;
 
 out vec4 FragColor;
 
-const vec2 resolution = vec2(1600.0, 900.0);
 
 mat3 zrot(float t)
 {

@@ -24,12 +24,12 @@ GrassScene::GrassScene() :
 
 void GrassScene::Update(float dt) {}
 
-void GrassScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time)
+void GrassScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution)
 {
-    plane.Draw(standardShader, view, projection, camPos, time, 800, 0);
+    plane.Draw(standardShader, view, projection, camPos, time, resolution, 800, 0);
 
-    grass1.Draw(grassShader, view, projection, camPos, time, 0, count);
-    grass2.Draw(grassShader, view, projection, camPos, time, 1, count);
+    grass1.Draw(grassShader, view, projection, camPos, time, resolution, 0, count);
+    grass2.Draw(grassShader, view, projection, camPos, time, resolution, 1, count);
 }
 
 void GrassScene::OnActivate(ICameraControl* cameraControl)

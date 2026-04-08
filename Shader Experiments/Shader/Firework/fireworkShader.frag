@@ -7,6 +7,7 @@ in vec3 FragPos;
 uniform vec3 cameraPos;
 uniform int index;
 uniform float time;
+uniform vec2 resolution;
 
 out vec4 FragColor;
 
@@ -49,9 +50,8 @@ float Explosion(vec2 uv, float t)
 
 void main()
 {
-	vec2 pixelCoords = vec2((TexCoords - 0.5).r * 1600, (TexCoords - 0.5).g * 900);
 	vec2 sceneUvs = (TexCoords - 0.5) * 2.0;
-	vec2 uv = vec2(sceneUvs.r , sceneUvs.g * (9.0 / 16.0));
+	vec2 uv = vec2(sceneUvs.r , sceneUvs.g * (resolution.y / resolution.x));
 
 	vec3 baseColor = vec3(0.0);
 

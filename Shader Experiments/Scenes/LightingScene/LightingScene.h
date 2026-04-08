@@ -11,7 +11,7 @@ public:
     virtual ~LightingScene() = default;
 
     void Update(float dt) override;
-    void Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time) override;
+    void Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution) override;
 
     std::string GetName() const override { return "Lighting"; }
     void OnActivate(ICameraControl* cameraControl) override;

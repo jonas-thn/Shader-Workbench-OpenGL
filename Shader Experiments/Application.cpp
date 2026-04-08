@@ -228,7 +228,7 @@ void Application::DrawScene()
 
     if (activeScene)
     {
-        activeScene->Draw(view, projection, camPos, (SDL_GetTicks() * 0.001f));
+        activeScene->Draw(view, projection, camPos, (SDL_GetTicks() * 0.001f), glm::vec2(currentFboWidth, currentFboHeight));
     }
 }
 
@@ -335,5 +335,5 @@ void Application::ResizeFBO(int newWidth, int newHeight)
 
 	InitFBO(newWidth, newHeight);
 
-	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(45.0f), (float)currentFboWidth / (float)currentFboHeight, 0.1f, 100.0f);
 }

@@ -7,6 +7,7 @@ in vec3 FragPos;
 uniform vec3 cameraPos;
 uniform int index;
 uniform float time;
+uniform vec2 resolution;
 
 out vec4 FragColor;
 
@@ -34,11 +35,9 @@ vec4 snoise(vec3 v)
 {
     const vec2 C = vec2(1.0 / 6.0, 1.0 / 3.0);
 
-    // First corner
     vec3 i  = floor(v + dot(v, vec3(C.y)));
     vec3 x0 = v   - i + dot(i, vec3(C.x));
 
-    // Other corners
     vec3 g = step(x0.yzx, x0.xyz);
     vec3 l = 1.0 - g;
     vec3 i1 = min(g.xyz, l.zxy);
@@ -48,16 +47,13 @@ vec4 snoise(vec3 v)
     vec3 x2 = x0 - i2 + C.y;
     vec3 x3 = x0 - 0.5;
 
-    // Permutations
-    i = mod289(i); // Avoid truncation effects in permutation
+    i = mod289(i);
     vec4 p =
       permute(permute(permute(i.z + vec4(0.0, i1.z, i2.z, 1.0))
                             + i.y + vec4(0.0, i1.y, i2.y, 1.0))
                             + i.x + vec4(0.0, i1.x, i2.x, 1.0));
 
-    // Gradients: 7x7 points over a square, mapped onto an octahedron.
-    // The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
-    vec4 j = p - 49.0 * floor(p / 49.0);  // mod(p,7*7)
+    vec4 j = p - 49.0 * floor(p / 49.0);  
 
     vec4 x_ = floor(j / 7.0);
     vec4 y_ = floor(j - 7.0 * x_); 
@@ -82,14 +78,12 @@ vec4 snoise(vec3 v)
     vec3 g2 = vec3(a1.xy, h.z);
     vec3 g3 = vec3(a1.zw, h.w);
 
-    // Normalize gradients
     vec4 norm = taylorInvSqrt(vec4(dot(g0, g0), dot(g1, g1), dot(g2, g2), dot(g3, g3)));
     g0 *= norm.x;
     g1 *= norm.y;
     g2 *= norm.z;
     g3 *= norm.w;
 
-    // Compute noise and gradient at P
     vec4 m = max(0.6 - vec4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0);
     vec4 m2 = m * m;
     vec4 m3 = m2 * m;
@@ -318,7 +312,7 @@ vec3 DrawPlanetAndStars(vec2 pixelCoords)
 
 void main()
 {
-	vec2 pixelCoords = vec2((TexCoords - 0.5).r * 1600, (TexCoords - 0.5).g * 900);
+	vec2 pixelCoords = vec2((TexCoords - 0.5).r * (resolution.x * 1.5), (TexCoords - 0.5).g * (resolution.y * 1.5));
 	vec3 baseColor = vec3(0.0);
 
 	vec3 final = DrawPlanetAndStars(pixelCoords);

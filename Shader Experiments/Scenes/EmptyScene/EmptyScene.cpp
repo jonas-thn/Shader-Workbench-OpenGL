@@ -11,11 +11,11 @@ EmptyScene::EmptyScene() :
 
 void EmptyScene::Update(float dt) {}
 
-void EmptyScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time)
+void EmptyScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution)
 {
     for (int i = 0; i < meshList.size(); i++)
     {
-        meshList[i]->Draw(standardShader, view, projection, camPos, time, i, 0);
+        meshList[i]->Draw(standardShader, view, projection, camPos, time, resolution, i, 0);
     }
 }
 
