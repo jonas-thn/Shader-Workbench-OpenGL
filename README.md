@@ -1,6 +1,6 @@
-# Shader Viewer OpenGL
+# Shader Workbench OpenGL
 -**graphics renderer** and **shader viewer** made with C++ and OpenGL / SDL <br>
--experimenting with **GLSL shaders, 3D graiphs and Software Architecture** <br>
+-experimenting with **GLSL shaders, 3D graphics and software architecture** <br>
 -**custom editor** inspired by [ShaderToy](https://www.shadertoy.com/) <br>
 -additional libs: glm, assimp, imgui <br> 
 
