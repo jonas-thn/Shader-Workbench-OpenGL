@@ -5,6 +5,7 @@
 #include "../../Mesh.h"
 #include <vector>
 #include <string>
+#include "../NodeModel.h"
 
 class Application;
 
@@ -22,8 +23,18 @@ public:
     void OnGuiRender() override;
 
 private:
-    /*Shader planetShader;
-    Mesh screen;*/
+    void AddNode(NodeType type);
+    void DrawNode(Node& node);
+    void DrawPins(std::vector<int>& inputPins, std::vector<int>& outputPins);
+
+private:
+    Shader nodeShader;
+    Mesh cube;
+
     IApplicationContext* appContext = nullptr;
+
+    std::vector<Node> nodes;
+    std::vector<Link> links;
+    int currentId = 1;
 };
 

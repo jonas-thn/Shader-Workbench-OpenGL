@@ -1,14 +1,34 @@
 #pragma once
+#include "../Mesh.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-struct Link {
+enum NodeType
+{
+    Master,
+    Time,
+    Color,
+    Add,
+    Subtract,
+    Mutliply,
+    Value,
+    Sin
+};
+
+struct Link 
+{
     int id;
     int startPin;
     int endPin;
 };
 
-struct Node {
+struct Node 
+{
     int id;
-    int inputPin;
-    int outputPin;
-    float value; 
+    NodeType type;
+    std::vector<int> inputPins;
+    std::vector<int> outputPins;
+
+    float value = 0.0f;
+	glm::vec3 colorValue = glm::vec3(0.0f);
 };

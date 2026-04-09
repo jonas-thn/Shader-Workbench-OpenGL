@@ -36,19 +36,19 @@ void CustomScene::OnGuiRender()
     float textBoxHeight = availableHeight - ImGui::GetFrameHeightWithSpacing();
 	ImGui::InputTextMultiline("###Shader Code", textBuffer.data(), textBuffer.size(), ImVec2(-1.0f, textBoxHeight), ImGuiInputTextFlags_AllowTabInput);
 
-    if (ImGui::Button("Reset"))
-    {
-		LoadDefaultShaderCode();
-    }
-
-	ImGui::SameLine();
-
     if (ImGui::Button("Swap"))
     {
         if (appContext)
         {
-			appContext->ToggleWindowLayout();
+            appContext->ToggleWindowLayout();
         }
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Reset"))
+    {
+		LoadDefaultShaderCode();
     }
 
     ImGui::SameLine();
