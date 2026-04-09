@@ -32,10 +32,9 @@ void CustomScene::OnActivate(IApplicationContext* appContext)
 
 void CustomScene::OnGuiRender()
 {
-	const ImGuiInputTextFlags inputFlags = (ImGuiInputTextFlags_AllowTabInput);
     float availableHeight = ImGui::GetContentRegionAvail().y;
     float textBoxHeight = availableHeight - ImGui::GetFrameHeightWithSpacing();
-	ImGui::InputTextMultiline("###Shader Code", textBuffer.data(), textBuffer.size(), ImVec2(-1.0f, textBoxHeight), inputFlags);
+	ImGui::InputTextMultiline("###Shader Code", textBuffer.data(), textBuffer.size(), ImVec2(-1.0f, textBoxHeight), ImGuiInputTextFlags_AllowTabInput);
 
     if (ImGui::Button("Reset"))
     {
@@ -44,7 +43,7 @@ void CustomScene::OnGuiRender()
 
 	ImGui::SameLine();
 
-    if (ImGui::Button("Swap Window"))
+    if (ImGui::Button("Swap"))
     {
         if (appContext)
         {

@@ -87,6 +87,12 @@
     <ClCompile Include="Scenes\CustomScene\CustomScene.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ImGui\imnodes.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\NodeScene\NodeScene.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -174,6 +180,18 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="UIConfig.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imnodes.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imnodes_internal.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\NodeScene\NodeScene.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\NodeModel.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

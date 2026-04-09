@@ -2,6 +2,7 @@
 
 #include "ImGui/imgui_impl_sdl2.h"
 #include "ImGui/imgui_impl_opengl3.h"
+#include "ImGui/imnodes.h"
 
 #include "Scenes/Scene.h"
 #include "UIConfig.h"
@@ -17,6 +18,7 @@
 #include "Scenes/WaterScene/WaterScene.h"
 #include "Scenes/TunnelScene/TunnelScene.h"
 #include "Scenes/CustomScene/CustomScene.h"
+#include "Scenes/NodeScene/NodeScene.h"
 
 Application::Application()
 {
@@ -34,6 +36,7 @@ Application::Application()
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImNodes::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
@@ -50,6 +53,7 @@ Application::~Application()
 {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
+	ImNodes::DestroyContext();
     ImGui::DestroyContext();
 }
 
@@ -73,6 +77,7 @@ void Application::Setup()
     sceneList.push_back(std::make_shared<TerrainScene>());
     sceneList.push_back(std::make_shared<OtherScene>());
     sceneList.push_back(std::make_shared<CustomScene>());
+	sceneList.push_back(std::make_shared<NodeScene>());
 
     if (!sceneList.empty())
     {
@@ -149,7 +154,7 @@ void Application::Render()
 
 void Application::DrawGUI()
 {
-    if(activeScene->GetName() != "Custom Shader")
+    if(activeScene->GetName() != "Custom Shader" && activeScene->GetName() != "Node Editor")
     {
 		isLayoutSwapped = false;
     }
@@ -168,7 +173,7 @@ void Application::DrawGUI()
 
     ImGui::SeparatorText("Select Scene");
 
-    if (ImGui::BeginListBox("##SceneList", ImVec2(-1, 189))) 
+    if (ImGui::BeginListBox("##SceneList", ImVec2(-1, 206))) 
     {
         for (int i = 0; i < sceneList.size(); i++)
         {

@@ -136,6 +136,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="ImGui\imnodes.cpp" />
+    <ClCompile Include="Scenes\NodeScene\NodeScene.cpp" />
     <ClCompile Include="Scenes\CustomScene\CustomScene.cpp" />
     <ClCompile Include="GLWindow.cpp" />
     <ClCompile Include="Scenes\TunnelScene\TunnelScene.cpp" />
@@ -162,6 +164,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="ImGui\imnodes.h" />
+    <ClInclude Include="ImGui\imnodes_internal.h" />
+    <ClInclude Include="Scenes\NodeModel.h" />
+    <ClInclude Include="Scenes\NodeScene\NodeScene.h" />
     <ClInclude Include="Scenes\CustomScene\CustomScene.h" />
     <ClInclude Include="GLWindow.h" />
     <ClInclude Include="ICameraControl.h" />
