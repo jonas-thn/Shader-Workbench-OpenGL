@@ -2,6 +2,12 @@
 #include "../../Application.h"
 #include "../../ImGui/imnodes.h"
 
+// 1. Node Gui Elemente / Attribute
+// 2. Node Verbindungen / Links 
+// 3. Node Typ Sicherheit
+// 4. Nodes lösche
+// 5. Nodes Rendern / Shader
+
 NodeScene::NodeScene() : 
     nodeShader("./Shader/Standard/standardShader.vert", "./Shader/Standard/standardShader.frag"),
     cube("./Models/cube.obj")
@@ -140,10 +146,6 @@ void NodeScene::AddNode(NodeType type)
         newNode.outputPins.push_back(currentId++);
         break;
     case Color:
-        newNode.outputPins.push_back(currentId++);
-        newNode.outputPins.push_back(currentId++);
-        newNode.outputPins.push_back(currentId++);
-        break;
     case Value:
         newNode.outputPins.push_back(currentId++);
         break;
@@ -202,7 +204,30 @@ void NodeScene::DrawNode(Node& node)
     }
 
     ImNodes::EndNodeTitleBar();
+
     DrawPins(node.inputPins, node.outputPins);
+
+    switch (node.type)
+    {
+    case NodeType::Color:
+        ImNodes::BeginOutputAttribute(node.outputPins[0]);
+
+        ImGui::SetNextItemWidth(60.0f);
+        ImGui::ColorPicker3("##colorPicker", &node.color[0], ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoSidePreview);
+
+        ImNodes::EndOutputAttribute();
+        break;
+
+    case NodeType::Value:
+        ImNodes::BeginOutputAttribute(node.outputPins[0]);
+
+        ImGui::SetNextItemWidth(60.0f);
+        ImGui::DragFloat("##floatVal", &node.value, 0.01f);
+
+        ImNodes::EndOutputAttribute();
+        break;
+    }
+
 
     ImNodes::EndNode();
 }

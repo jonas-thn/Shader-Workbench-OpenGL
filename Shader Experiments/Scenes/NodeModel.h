@@ -30,5 +30,5 @@ struct Node
     std::vector<int> outputPins;
 
     float value = 0.0f;
-	glm::vec3 colorValue = glm::vec3(0.0f);
+	glm::vec3 color = glm::vec3(0.0f);
 };
