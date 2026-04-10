@@ -26,6 +26,9 @@ private:
     void AddNode(NodeType type);
     void DrawNode(Node& node);
     void DrawPins(std::vector<int>& inputPins, std::vector<int>& outputPins);
+    void DrawNodeEditor();
+    void DrawNodePopup(bool& popupOpen);
+    void HandleLinks();
 
 private:
     Shader nodeShader;

@@ -1,8 +1,8 @@
 #include "NodeScene.h"
 #include "../../Application.h"
 #include "../../ImGui/imnodes.h"
+#include <algorithm>
 
-// 1. Node Gui Elemente / Attribute
 // 2. Node Verbindungen / Links 
 // 3. Node Typ Sicherheit
 // 4. Nodes lösche
@@ -14,6 +14,9 @@ NodeScene::NodeScene() :
 {
     meshList.push_back(&cube);
 	AddNode(Master);
+
+	static bool enableLinkDetach = true;
+	ImNodes::GetIO().LinkDetachWithModifierClick.Modifier = &enableLinkDetach;
 }
 
 void NodeScene::Update(float dt) {}
@@ -39,14 +42,11 @@ void NodeScene::OnGuiRender()
 	ImGui::SetNextWindowSize(ImVec2(-1.0f, nodeEditorHeight));
 
     ImGui::BeginChild("NodeEditorRegion", ImVec2(-1, nodeEditorHeight));
-    ImNodes::BeginNodeEditor();
+    
+    DrawNodeEditor();
 
-    for (auto& node : nodes)
-    {
-        DrawNode(node);
-    }
+    HandleLinks();
 
-    ImNodes::EndNodeEditor();
     ImGui::EndChild();
 
     if (ImGui::Button("Swap"))
@@ -64,64 +64,7 @@ void NodeScene::OnGuiRender()
     {
         popupOpen = true;
     }
-
-    if(popupOpen)
-    {
-        ImGui::OpenPopup("AddNodeMenu");
-	}
-
-    if (ImGui::BeginPopup("AddNodeMenu"))
-    {
-        ImGui::SeparatorText("Inputs");
-        if (ImGui::MenuItem("Value Node"))
-        {
-			AddNode(Value);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Time Node"))
-        {
-			AddNode(Time);
-			popupOpen = false;
-        }
-        if (ImGui::MenuItem("Color Node"))
-        {
-            AddNode(Color);
-            popupOpen = false;
-        }
-
-        ImGui::SeparatorText("Math");
-        if (ImGui::MenuItem("Add Node"))
-        {
-            AddNode(Add);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Subtract Node"))
-        {
-            AddNode(Subtract);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Multiply Node"))
-        {
-            AddNode(Mutliply);      
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Sin Node"))
-        {
-            AddNode(Sin);
-            popupOpen = false;
-        }
-
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
-
-        if (ImGui::MenuItem("Exit"))
-        {
-            popupOpen = false;
-        }
-
-        ImGui::EndPopup();
-    }
+	DrawNodePopup(popupOpen);
 
     ImGui::SameLine();
 
@@ -246,6 +189,105 @@ void NodeScene::DrawPins(std::vector<int>& inputPins, std::vector<int>& outputPi
         ImGui::Indent(40);
         ImGui::Text("out");
         ImNodes::EndOutputAttribute();
+    }
+}
+
+void NodeScene::DrawNodeEditor()
+{
+    ImNodes::BeginNodeEditor();
+
+    for (auto& node : nodes)
+    {
+        DrawNode(node);
+    }
+
+    for (const auto& link : links)
+    {
+        ImNodes::Link(link.id, link.startPin, link.endPin);
+    }
+
+    ImNodes::EndNodeEditor();
+}
+
+void NodeScene::DrawNodePopup(bool& popupOpen)
+{
+    if (popupOpen)
+    {
+        ImGui::OpenPopup("AddNodeMenu");
+    }
+
+    if (ImGui::BeginPopup("AddNodeMenu"))
+    {
+        ImGui::SeparatorText("Inputs");
+        if (ImGui::MenuItem("Value Node"))
+        {
+            AddNode(Value);
+            popupOpen = false;
+        }
+        if (ImGui::MenuItem("Time Node"))
+        {
+            AddNode(Time);
+            popupOpen = false;
+        }
+        if (ImGui::MenuItem("Color Node"))
+        {
+            AddNode(Color);
+            popupOpen = false;
+        }
+
+        ImGui::SeparatorText("Math");
+        if (ImGui::MenuItem("Add Node"))
+        {
+            AddNode(Add);
+            popupOpen = false;
+        }
+        if (ImGui::MenuItem("Subtract Node"))
+        {
+            AddNode(Subtract);
+            popupOpen = false;
+        }
+        if (ImGui::MenuItem("Multiply Node"))
+        {
+            AddNode(Mutliply);
+            popupOpen = false;
+        }
+        if (ImGui::MenuItem("Sin Node"))
+        {
+            AddNode(Sin);
+            popupOpen = false;
+        }
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+
+        if (ImGui::MenuItem("Exit"))
+        {
+            popupOpen = false;
+        }
+
+        ImGui::EndPopup();
+    }
+}
+
+void NodeScene::HandleLinks()
+{
+    int startPinId, endPinId;
+    if (ImNodes::IsLinkCreated(&startPinId, &endPinId))
+    {
+        Link newLink;
+        newLink.id = currentId++;
+        newLink.startPin = startPinId;
+        newLink.endPin = endPinId;
+        links.push_back(newLink);
+    }
+
+    int destroyedLinkId;
+    if (ImNodes::IsLinkDestroyed(&destroyedLinkId))
+    {
+        links.erase(std::remove_if(links.begin(), links.end(), [destroyedLinkId](const Link& link) {
+            return link.id == destroyedLinkId;
+            }), links.end());
     }
 }
 
