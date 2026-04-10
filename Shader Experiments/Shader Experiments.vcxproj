@@ -203,6 +203,8 @@
     <None Include="Shader\Custom\customShader.vert" />
     <None Include="Shader\Firework\fireworkShader.frag" />
     <None Include="Shader\Firework\fireworkShader.vert" />
+    <None Include="Shader\Node\nodeShader.frag" />
+    <None Include="Shader\Node\nodeShader.vert" />
     <None Include="Shader\Tunnel\tunnelShader.frag" />
     <None Include="Shader\Tunnel\tunnelShader.vert" />
     <None Include="Shader\Grass\grassShader.frag" />

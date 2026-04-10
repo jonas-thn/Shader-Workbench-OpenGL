@@ -10,7 +10,7 @@ enum NodeType
     Color,
     Add,
     Subtract,
-    Mutliply,
+    Multiply,
     Value,
     Sin
 };
@@ -29,6 +29,6 @@ struct Node
     std::vector<int> inputPins;
     std::vector<int> outputPins;
 
+	glm::vec3 data = glm::vec3(0.0f);
     float value = 0.0f;
-	glm::vec3 color = glm::vec3(0.0f);
 };

@@ -32,6 +32,11 @@ private:
     void HandleNodeDeletion();
     void DeleteNode(int nodeId);
 
+	int FindLinkConnectedToInput(int inputPin);
+    int FindNodeByOutput(int outputPin);
+	glm::vec3 EvaluateNode(int nodeIndex); 
+    void CompileNodes();
+
 private:
     Shader nodeShader;
     Mesh cube;
@@ -41,5 +46,6 @@ private:
     std::vector<Node> nodes;
     std::vector<Link> links;
     int currentId = 1;
+	glm::vec3 nodeColor = glm::vec3(-1.0f);
 };
 

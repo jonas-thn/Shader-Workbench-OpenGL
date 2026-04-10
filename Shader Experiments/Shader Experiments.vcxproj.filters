@@ -219,6 +219,8 @@
     <None Include="Shader\Custom\customShader.vert" />
     <None Include="Shader\Custom\customShader.frag" />
     <None Include="Shader\Custom\customDefault.frag" />
+    <None Include="Shader\Node\nodeShader.frag" />
+    <None Include="Shader\Node\nodeShader.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ImGui\LICENSE.txt" />

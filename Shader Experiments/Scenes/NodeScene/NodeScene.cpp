@@ -3,10 +3,8 @@
 #include "../../ImGui/imnodes.h"
 #include <algorithm>
 
-// 5. Nodes Rendern / Shader
-
 NodeScene::NodeScene() : 
-    nodeShader("./Shader/Standard/standardShader.vert", "./Shader/Standard/standardShader.frag"),
+    nodeShader("./Shader/Node/nodeShader.vert", "./Shader/Node/nodeShader.frag"),
     cube("./Models/cube.obj")
 {
     meshList.push_back(&cube);
@@ -16,13 +14,16 @@ NodeScene::NodeScene() :
 	ImNodes::GetIO().LinkDetachWithModifierClick.Modifier = &enableLinkDetach;
 }
 
-void NodeScene::Update(float dt) {}
+void NodeScene::Update(float dt) 
+{
+    CompileNodes();
+}
 
 void NodeScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution)
 {
     for (int i = 0; i < meshList.size(); i++)
     {
-        meshList[i]->Draw(nodeShader, view, projection, camPos, time, resolution, i, 0);
+        meshList[i]->Draw(nodeShader, view, projection, camPos, time, resolution, i, 0, nodeColor);
     }
 }
 
@@ -77,13 +78,6 @@ void NodeScene::OnGuiRender()
          currentId = 1;
 		 AddNode(Master);
     }
-
-    ImGui::SameLine();
-
-    if (ImGui::Button("Compile"))
-    {
-
-    }
 }
 
 void NodeScene::AddNode(NodeType type)
@@ -106,7 +100,7 @@ void NodeScene::AddNode(NodeType type)
         break;
     case Add:
     case Subtract:
-    case Mutliply:
+    case Multiply:
         newNode.inputPins.push_back(currentId++);
         newNode.inputPins.push_back(currentId++);
         newNode.outputPins.push_back(currentId++);
@@ -144,7 +138,7 @@ void NodeScene::DrawNode(Node& node)
     case Subtract:
         ImGui::TextUnformatted("Subtract");
         break;
-    case Mutliply:
+    case Multiply:
 		ImGui::TextUnformatted("Mutliply");
         break;
     case Value:
@@ -168,7 +162,7 @@ void NodeScene::DrawNode(Node& node)
         ImNodes::BeginOutputAttribute(node.outputPins[0]);
 
         ImGui::SetNextItemWidth(60.0f);
-        ImGui::ColorPicker3("##colorPicker", &node.color[0], ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoSidePreview);
+        ImGui::ColorPicker3("##colorPicker", &node.data[0], ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoSidePreview);
 
         ImNodes::EndOutputAttribute();
         break;
@@ -178,6 +172,7 @@ void NodeScene::DrawNode(Node& node)
 
         ImGui::SetNextItemWidth(60.0f);
         ImGui::DragFloat("##floatVal", &node.value, 0.01f);
+		node.data = glm::vec3(node.value);
 
         ImNodes::EndOutputAttribute();
         break;
@@ -260,7 +255,7 @@ void NodeScene::DrawNodePopup(bool& popupOpen)
         }
         if (ImGui::MenuItem("Multiply Node"))
         {
-            AddNode(Mutliply);
+            AddNode(Multiply);
             popupOpen = false;
         }
         if (ImGui::MenuItem("Sin Node"))
@@ -373,6 +368,121 @@ void NodeScene::DeleteNode(int nodeId)
     }
 
     nodes.erase(nodes.begin() + nodeIndex);
+}
+
+int NodeScene::FindLinkConnectedToInput(int inputPin)
+{
+    for (int i = 0; i < links.size(); i++)
+    {
+        if(links[i].endPin == inputPin)
+        {
+            return i;
+		}
+    }
+    return -1;
+}
+
+int NodeScene::FindNodeByOutput(int outputPin)
+{
+    for(int i = 0; i < nodes.size(); i++)
+    {
+        for(int j = 0; j < nodes[i].outputPins.size(); j++)
+        {
+            if(outputPin == nodes[i].outputPins[j])
+            {
+                return i;
+			}
+		}
+	}
+    return -1;
+}
+
+glm::vec3 NodeScene::EvaluateNode(int nodeIndex)
+{
+    if(nodeIndex < 0 || nodeIndex >= nodes.size())
+    {
+        return glm::vec3();
+	}
+
+    Node& node = nodes[nodeIndex];
+
+    switch (node.type)
+    {
+    case Value:
+		return node.data;
+    case Time:
+        return glm::vec3(SDL_GetTicks() / 1000.0f);
+    case Color:
+        return node.data;
+    case Add:
+    case Subtract:
+    case Multiply:
+    {
+        glm::vec3 inputA = glm::vec3(0.0f);
+        glm::vec3 inputB = glm::vec3(0.0f);
+
+		int linkIndexA = FindLinkConnectedToInput(node.inputPins[0]);
+        if (linkIndexA != -1)
+        {
+			int sourceNodeA = FindNodeByOutput(links[linkIndexA].startPin);
+            inputA = EvaluateNode(sourceNodeA);
+        }
+
+		int linkIndexB = FindLinkConnectedToInput(node.inputPins[1]);
+        if (linkIndexB != -1)
+        {
+            int sourceNodeB = FindNodeByOutput(links[linkIndexB].startPin);
+            inputB = EvaluateNode(sourceNodeB);
+        }
+
+        if (node.type == Add) return inputA + inputB;
+		if (node.type == Subtract) return inputA - inputB;
+        if (node.type == Multiply) return inputA * inputB;
+    }
+    case Sin:
+    {
+        glm::vec3 input = glm::vec3(0.0f);
+
+		int linkIndex = FindLinkConnectedToInput(node.inputPins[0]);
+        if (linkIndex != -1)
+        {
+			int sourceNode = FindNodeByOutput(links[linkIndex].startPin);
+            input = EvaluateNode(sourceNode);
+        }
+        return glm::sin(input);
+    }
+    default: 
+		return glm::vec3(0.0f);
+    }
+}
+
+void NodeScene::CompileNodes()
+{
+    int masterNodeIndex = -1;
+    for(int i = 0; i < nodes.size(); i++)
+    {
+        if(nodes[i].type == Master)
+        {
+            masterNodeIndex = i;
+            break;
+        }
+	}
+
+    glm::vec3 finalResult = glm::vec3(1.0);
+
+    if(masterNodeIndex != -1)
+    {
+		Node& masterNode = nodes[masterNodeIndex];
+
+		int linkToMaster = FindLinkConnectedToInput(masterNode.inputPins[0]);
+        if(linkToMaster != -1)
+        {
+           int sourceNodeIndex = FindNodeByOutput(links[linkToMaster].startPin);
+		   finalResult = EvaluateNode(sourceNodeIndex);
+        }
+    }
+
+    nodeColor = finalResult;
 }
 
 

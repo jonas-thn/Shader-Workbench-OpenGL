@@ -214,7 +214,7 @@ void Mesh::SetScale(glm::vec3 scale)
 }
 
 void Mesh::Draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection,
-    const glm::vec3& camPos, float time, const glm::vec2& resolution, int index, int count) const
+    const glm::vec3& camPos, float time, const glm::vec2& resolution, int index, int count, const glm::vec3& nodeColor) const
 {
     if (vertices.empty()) return;
 
@@ -226,6 +226,11 @@ void Mesh::Draw(Shader& shader, const glm::mat4& view, const glm::mat4& projecti
     shader.SetFloat("time", time);
     shader.SetInt("index", index);
     shader.SetVec2("resolution", resolution);
+
+    if(nodeColor != glm::vec3(-1.0f))
+    {
+        shader.SetVec3("nodeColor", nodeColor);
+	}
 
     glBindVertexArray(VAO);
 
