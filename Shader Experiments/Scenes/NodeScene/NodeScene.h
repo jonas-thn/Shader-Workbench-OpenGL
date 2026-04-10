@@ -29,6 +29,8 @@ private:
     void DrawNodeEditor();
     void DrawNodePopup(bool& popupOpen);
     void HandleLinks();
+    void HandleNodeDeletion();
+    void DeleteNode(int nodeId);
 
 private:
     Shader nodeShader;

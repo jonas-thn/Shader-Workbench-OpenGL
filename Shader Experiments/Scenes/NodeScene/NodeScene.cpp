@@ -3,9 +3,6 @@
 #include "../../ImGui/imnodes.h"
 #include <algorithm>
 
-// 2. Node Verbindungen / Links 
-// 3. Node Typ Sicherheit
-// 4. Nodes lösche
 // 5. Nodes Rendern / Shader
 
 NodeScene::NodeScene() : 
@@ -46,6 +43,7 @@ void NodeScene::OnGuiRender()
     DrawNodeEditor();
 
     HandleLinks();
+    HandleNodeDeletion();
 
     ImGui::EndChild();
 
@@ -68,7 +66,21 @@ void NodeScene::OnGuiRender()
 
     ImGui::SameLine();
 
-    if (ImGui::Button("Render"))
+    if (ImGui::Button("Reset"))
+    {
+        for (auto node : nodes)
+        {
+            DeleteNode(node.id);
+        }
+         nodes.clear();
+         links.clear();
+         currentId = 1;
+		 AddNode(Master);
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Compile"))
     {
 
     }
@@ -289,6 +301,78 @@ void NodeScene::HandleLinks()
             return link.id == destroyedLinkId;
             }), links.end());
     }
+}
+
+void NodeScene::HandleNodeDeletion()
+{
+    if (ImGui::IsKeyPressed(ImGuiKey_Delete) || ImGui::IsKeyPressed(ImGuiKey_Backspace))
+    {
+		const int numSelectedNodes = ImNodes::NumSelectedNodes();
+
+        if(numSelectedNodes > 0)
+        {
+            std::vector<int> selectedNodes(numSelectedNodes);
+			ImNodes::GetSelectedNodes(selectedNodes.data());
+
+            for (int nodeId : selectedNodes)
+            {
+                DeleteNode(nodeId);
+			}
+
+            ImNodes::ClearNodeSelection();
+		}
+    }
+}
+
+void NodeScene::DeleteNode(int nodeId)
+{
+    int nodeIndex = -1;
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        if(nodes[i].id == nodeId)
+        {
+            nodeIndex = i;
+            break;
+	    }
+    }
+
+    if (nodeIndex == -1 || nodes[nodeIndex].type == Master)
+    {
+        return;
+    }
+
+	Node& nodeToDelete = nodes[nodeIndex];
+
+    for (int i = links.size() - 1; i >= 0; i--)
+    {
+        Link& currentLink = links[i];
+        bool linkMustBeDeleted = false;
+
+        for (int inputPin : nodeToDelete.inputPins)
+        {
+            if (currentLink.endPin == inputPin)
+            {
+                linkMustBeDeleted = true;
+                break;
+            }
+		}
+
+        for (int outputPin : nodeToDelete.outputPins)
+        {
+            if (currentLink.startPin == outputPin)
+            {
+                linkMustBeDeleted = true;
+				break;
+            }
+        }
+
+        if (linkMustBeDeleted)
+        {
+            links.erase(links.begin() + i);
+        }
+    }
+
+    nodes.erase(nodes.begin() + nodeIndex);
 }
 
 
