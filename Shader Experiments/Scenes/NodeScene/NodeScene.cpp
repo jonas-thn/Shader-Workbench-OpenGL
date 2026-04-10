@@ -178,7 +178,6 @@ void NodeScene::DrawNode(Node& node)
         break;
     }
 
-
     ImNodes::EndNode();
 }
 
