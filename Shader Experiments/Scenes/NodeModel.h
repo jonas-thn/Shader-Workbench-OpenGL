@@ -12,7 +12,12 @@ enum NodeType
     Subtract,
     Multiply,
     Value,
-    Sin
+    Sin,
+    Lerp,
+    Min,
+    Max,
+    Abs,
+    Mod
 };
 
 struct Link 

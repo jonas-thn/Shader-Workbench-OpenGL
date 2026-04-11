@@ -101,14 +101,23 @@ void NodeScene::AddNode(NodeType type)
     case Add:
     case Subtract:
     case Multiply:
+    case Min:
+    case Max:
+    case Mod:
         newNode.inputPins.push_back(currentId++);
         newNode.inputPins.push_back(currentId++);
         newNode.outputPins.push_back(currentId++);
 		break;
     case Sin:
+    case Abs:
         newNode.inputPins.push_back(currentId++);
         newNode.outputPins.push_back(currentId++);
         break;
+    case Lerp:
+        newNode.inputPins.push_back(currentId++); 
+        newNode.inputPins.push_back(currentId++); 
+        newNode.inputPins.push_back(currentId++); 
+        newNode.outputPins.push_back(currentId++); 
     default:
         break;
     }
@@ -146,6 +155,21 @@ void NodeScene::DrawNode(Node& node)
         break;
     case Sin:
         ImGui::TextUnformatted("Sin");
+        break;
+    case Lerp:
+        ImGui::TextUnformatted("Lerp");
+        break;
+    case Min:
+        ImGui::TextUnformatted("Min");
+        break;
+    case Max:
+        ImGui::TextUnformatted("Max");
+        break;
+    case Abs:
+        ImGui::TextUnformatted("Abs");
+        break;
+    case Mod:
+        ImGui::TextUnformatted("Mod");
         break;
     default:
         ImGui::TextUnformatted("NODE ERROR");
@@ -260,6 +284,31 @@ void NodeScene::DrawNodePopup(bool& popupOpen)
         if (ImGui::MenuItem("Sin Node"))
         {
             AddNode(Sin);
+            popupOpen = false;
+        }
+        if (ImGui::MenuItem("Lerp Node"))
+        {
+            AddNode(Lerp);
+            popupOpen = false;
+        }
+        if (ImGui::MenuItem("Min Node"))
+        {
+            AddNode(Min);
+            popupOpen = false;
+        }
+        if (ImGui::MenuItem("Max Node"))
+        {
+            AddNode(Max);
+            popupOpen = false;
+        }
+        if (ImGui::MenuItem("Abs Node"))
+        {
+            AddNode(Abs);
+            popupOpen = false;
+        }
+        if (ImGui::MenuItem("Mod Node"))
+        {
+            AddNode(Mod);
             popupOpen = false;
         }
 
@@ -416,6 +465,9 @@ glm::vec3 NodeScene::EvaluateNode(int nodeIndex)
     case Add:
     case Subtract:
     case Multiply:
+    case Min: 
+    case Max: 
+    case Mod: 
     {
         glm::vec3 inputA = glm::vec3(0.0f);
         glm::vec3 inputB = glm::vec3(0.0f);
@@ -437,8 +489,38 @@ glm::vec3 NodeScene::EvaluateNode(int nodeIndex)
         if (node.type == Add) return inputA + inputB;
 		if (node.type == Subtract) return inputA - inputB;
         if (node.type == Multiply) return inputA * inputB;
+        if (node.type == Min) return glm::min(inputA, inputB);
+        if (node.type == Max) return glm::max(inputA, inputB);
+        if (node.type == Mod) return glm::mod(inputA, inputB);
+    }
+    case Lerp:
+    {
+		glm::vec3 inputA = glm::vec3(0.0f);
+		glm::vec3 inputB = glm::vec3(0.0f);
+		glm::vec3 inputT = glm::vec3(0.0f);
+
+		int linkIndexA = FindLinkConnectedToInput(node.inputPins[0]);
+        if (linkIndexA != -1)
+        {
+            inputA = EvaluateNode(FindNodeByOutput(links[linkIndexA].startPin));
+        }
+
+        int linkIndexB = FindLinkConnectedToInput(node.inputPins[1]);
+        if (linkIndexB != -1)
+        {
+            inputB = EvaluateNode(FindNodeByOutput(links[linkIndexB].startPin));
+        }
+
+        int linkIndexT = FindLinkConnectedToInput(node.inputPins[2]);
+        if (linkIndexT != -1)
+        {
+            inputT = EvaluateNode(FindNodeByOutput(links[linkIndexT].startPin));
+        }
+
+		return glm::mix(inputA, inputB, inputT);
     }
     case Sin:
+    case Abs:
     {
         glm::vec3 input = glm::vec3(0.0f);
 
@@ -448,7 +530,9 @@ glm::vec3 NodeScene::EvaluateNode(int nodeIndex)
 			int sourceNode = FindNodeByOutput(links[linkIndex].startPin);
             input = EvaluateNode(sourceNode);
         }
-        return glm::sin(input);
+
+        if (node.type == Sin) return glm::sin(input);
+		if (node.type == Abs) return glm::abs(input);
     }
     default: 
 		return glm::vec3(0.0f);
