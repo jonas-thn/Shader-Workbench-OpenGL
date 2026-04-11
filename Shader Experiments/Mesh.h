@@ -39,8 +39,7 @@ public:
     std::vector<float>& GetVertices() { return vertices; }
     std::vector<unsigned int>& GetIndices() { return indices; }
 
-    void Draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos,
-        float time, const glm::vec2& resolution, int index, int count, const glm::vec3& nodeColor = glm::vec3(-1.0f)) const;
+    void Draw(Shader& shader, int index, int count, const glm::vec3& nodeColor = glm::vec3(-1.0f)) const;
 
 private:
     void LoadMesh();

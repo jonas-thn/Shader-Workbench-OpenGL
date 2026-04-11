@@ -1,12 +1,19 @@
-#version 330 core
+#version 420 core
 
 in vec2 TexCoords;
 in vec3 Normals;
 in vec3 FragPos;
 
-uniform vec3 cameraPos;
-uniform float time;
-uniform vec2 resolution;
+layout (std140, binding = 0) uniform SceneUniforms 
+{
+    mat4 view;
+    mat4 projection;
+    vec3 cameraPos;
+    float padding1; 
+    vec2 resolution;
+    float time;
+    float padding2; 
+};
 
 out vec4 FragColor;
 

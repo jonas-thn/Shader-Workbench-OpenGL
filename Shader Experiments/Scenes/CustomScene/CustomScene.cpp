@@ -16,11 +16,11 @@ CustomScene::CustomScene() :
 
 void CustomScene::Update(float dt) {}
 
-void CustomScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution)
+void CustomScene::Draw()
 {
     for (int i = 0; i < meshList.size(); i++)
     {
-        meshList[i]->Draw(customShader, view, projection, camPos, time, resolution, i, 0);
+        meshList[i]->Draw(customShader, i, 0);
     }
 }
 

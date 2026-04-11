@@ -13,7 +13,7 @@ public:
     virtual ~FireworkScene() = default;
 
     void Update(float dt) override;
-    void Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution) override;
+    void Draw() override;
 
     std::string GetName() const override { return "Firework"; }
     void OnActivate(IApplicationContext* cameraControl) override;

@@ -16,7 +16,7 @@ public:
 
     virtual void Update(float dt) = 0;
 
-    virtual void Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution) = 0;
+    virtual void Draw() = 0;
 
     virtual std::string GetName() const = 0;
 

@@ -19,11 +19,11 @@ void NodeScene::Update(float dt)
     CompileNodes();
 }
 
-void NodeScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution)
+void NodeScene::Draw()
 {
     for (int i = 0; i < meshList.size(); i++)
     {
-        meshList[i]->Draw(nodeShader, view, projection, camPos, time, resolution, i, 0, nodeColor);
+        meshList[i]->Draw(nodeShader, i, 0, nodeColor);
     }
 }
 

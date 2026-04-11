@@ -213,19 +213,13 @@ void Mesh::SetScale(glm::vec3 scale)
     model[3] = glm::vec4(translation, 1.0f);
 }
 
-void Mesh::Draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection,
-    const glm::vec3& camPos, float time, const glm::vec2& resolution, int index, int count, const glm::vec3& nodeColor) const
+void Mesh::Draw(Shader& shader, int index, int count, const glm::vec3& nodeColor) const
 {
     if (vertices.empty()) return;
 
     shader.Use();
     shader.SetMat4("model", model);
-    shader.SetMat4("view", view);
-    shader.SetMat4("projection", projection);
-    shader.SetVec3("cameraPos", camPos);
-    shader.SetFloat("time", time);
     shader.SetInt("index", index);
-    shader.SetVec2("resolution", resolution);
 
     if(nodeColor != glm::vec3(-1.0f))
     {

@@ -15,6 +15,17 @@
 
 class Scene;
 
+//16 byte aligned
+struct SceneUniforms
+{
+    glm::mat4 view;
+    glm::mat4 projection;
+    glm::vec4 camPos;
+    glm::vec2 resolution;
+    float time;
+    float padding;
+};
+
 class Application : public IApplicationContext
 {
 public:
@@ -70,4 +81,6 @@ private:
 
 	int currentFboWidth = 0;
 	int currentFboHeight = 0;
+
+    unsigned int sceneUBO = 0; 
 };

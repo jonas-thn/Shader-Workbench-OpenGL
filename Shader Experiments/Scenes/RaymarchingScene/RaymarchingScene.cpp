@@ -10,11 +10,11 @@ RaymarchingScene::RaymarchingScene() :
 
 void RaymarchingScene::Update(float dt) {}
 
-void RaymarchingScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution)
+void RaymarchingScene::Draw()
 {
     for (int i = 0; i < meshList.size(); i++)
     {
-        meshList[i]->Draw(raymarchShader, view, projection, camPos, time, resolution, i, 0);
+        meshList[i]->Draw(raymarchShader, i, 0);
     }
 }
 

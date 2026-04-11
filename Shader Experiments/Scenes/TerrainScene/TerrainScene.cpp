@@ -10,11 +10,11 @@ TerrainScene::TerrainScene() :
 
 void TerrainScene::Update(float dt) {}
 
-void TerrainScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution)
+void TerrainScene::Draw()
 {
     for (int i = 0; i < meshList.size(); i++)
     {
-        meshList[i]->Draw(terrainShader, view, projection, camPos, time, resolution, i, 0);
+        meshList[i]->Draw(terrainShader, i, 0);
     }
 }
 

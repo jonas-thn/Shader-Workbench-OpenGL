@@ -10,11 +10,11 @@ WaterScene::WaterScene() :
 
 void WaterScene::Update(float dt) {}
 
-void WaterScene::Draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& camPos, float time, const glm::vec2& resolution)
+void WaterScene::Draw()
 {
     for (int i = 0; i < meshList.size(); i++)
     {
-        meshList[i]->Draw(waterShader, view, projection, camPos, time, resolution, i, 0);
+        meshList[i]->Draw(waterShader, i, 0);
     }
 }
 

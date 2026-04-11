@@ -84,6 +84,12 @@ void Application::Setup()
         activeScene = sceneList[0].get();
         activeScene->OnActivate(this);
     }
+
+    glGenBuffers(1, &sceneUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, sceneUBO);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(SceneUniforms), nullptr, GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 0, sceneUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void Application::ProcessInput()
@@ -159,7 +165,6 @@ void Application::DrawGUI()
 		isLayoutSwapped = false;
     }
     
-    //settings
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
@@ -224,7 +229,6 @@ void Application::DrawGUI()
     ImGui::End();
     ImGui::PopStyleVar();
 
-    //main window
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::SetNextWindowSize(ImVec2((float)(width - uiWidth), (float)height));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(15.0f, 8.0f));
@@ -267,9 +271,21 @@ void Application::DrawScene()
     glClearColor(0.1f, 0.1f, 0.105f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	SceneUniforms uniforms;
+	uniforms.view = view;
+	uniforms.projection = projection;
+	uniforms.camPos = glm::vec4(camPos, 1.0f);
+	uniforms.resolution = glm::vec2(currentFboWidth, currentFboHeight);
+	uniforms.time = SDL_GetTicks() * 0.001f;
+	uniforms.padding = 0.0f;
+
+	glBindBuffer(GL_UNIFORM_BUFFER, sceneUBO);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(SceneUniforms), &uniforms);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
     if (activeScene)
     {
-        activeScene->Draw(view, projection, camPos, (SDL_GetTicks() * 0.001f), glm::vec2(currentFboWidth, currentFboHeight));
+        activeScene->Draw();
     }
 }
 
