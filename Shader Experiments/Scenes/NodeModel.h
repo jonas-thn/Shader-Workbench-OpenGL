@@ -8,6 +8,7 @@ enum NodeType
     Master,
     Time,
     Color,
+    Random,
     Add,
     Subtract,
     Multiply,
@@ -22,7 +23,7 @@ enum NodeType
 
 inline constexpr const char* nodeTitles[] = 
 {
-    "Master", "Time", "Color", "Add", "Subtract", "Multiply", "Value", "Sin", "Lerp", "Min", "Max", "Abs", "Mod"
+    "Master", "Time", "Color", "Random", "Add", "Subtract", "Multiply", "Value", "Sin", "Lerp", "Min", "Max", "Abs", "Mod"
 };
 
 struct MenuEntry 
@@ -35,10 +36,12 @@ inline constexpr MenuEntry inputNodes[] =
 {
     {Value, "Value Node"},
     {Time, "Time Node"},
-    {Color, "Color Node"}
+    {Color, "Color Node"},
+	{Random, "Random Node"}
 };
 
-inline constexpr MenuEntry mathNodes[] ={
+inline constexpr MenuEntry mathNodes[] =
+{
     {Add, "Add Node"},
     {Subtract, "Subtract Node"},
     {Multiply, "Multiply Node"},

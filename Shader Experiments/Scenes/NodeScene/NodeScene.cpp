@@ -2,6 +2,7 @@
 #include "../../Application.h"
 #include "../../ImGui/imnodes.h"
 #include <algorithm>
+#include <limits>
 
 NodeScene::NodeScene() : 
     nodeShader("./Shader/Node/nodeShader.vert", "./Shader/Node/nodeShader.frag"),
@@ -92,11 +93,13 @@ void NodeScene::AddNode(NodeType type)
 		newNode.inputPins.push_back(currentId++);
         break;
     case Time:
-        newNode.outputPins.push_back(currentId++);
-        break;
     case Color:
     case Value:
         newNode.outputPins.push_back(currentId++);
+        break;
+    case Random:
+        newNode.outputPins.push_back(currentId++);
+        newNode.value = 1.0f;
         break;
     case Add:
     case Subtract:
@@ -145,7 +148,7 @@ void NodeScene::DrawNode(Node& node)
 
     switch (node.type)
     {
-    case NodeType::Color:
+    case Color:
         ImNodes::BeginOutputAttribute(node.outputPins[0]);
 
         ImGui::SetNextItemWidth(60.0f);
@@ -154,12 +157,23 @@ void NodeScene::DrawNode(Node& node)
         ImNodes::EndOutputAttribute();
         break;
 
-    case NodeType::Value:
+    case Value:
         ImNodes::BeginOutputAttribute(node.outputPins[0]);
 
         ImGui::SetNextItemWidth(60.0f);
         ImGui::DragFloat("##floatVal", &node.value, 0.01f);
 		node.data = glm::vec3(node.value);
+
+        ImNodes::EndOutputAttribute();
+        break;
+
+    case Random:
+        ImNodes::BeginOutputAttribute(node.outputPins[0]);
+
+        ImGui::SetNextItemWidth(60.0f);
+        ImGui::DragFloat("##randomSpeed", &node.value, 0.01f);
+
+		node.value = std::max(0.0f, node.value);
 
         ImNodes::EndOutputAttribute();
         break;
@@ -381,6 +395,18 @@ glm::vec3 NodeScene::EvaluateNode(int nodeIndex)
         return glm::vec3(SDL_GetTicks() / 1000.0f);
     case Color:
         return node.data;
+    case Random:
+    {
+        static int time = 0;
+        time++;
+		float reset = node.value > 0.0f ? ((1 / node.value) * 30.0f) : std::numeric_limits<float>::max();
+        if (static_cast<float>(time) > reset)
+        {
+            node.data = glm::vec3(static_cast<float>(rand()) / RAND_MAX);
+            time = 0;
+        }
+        return node.data;
+    }
     case Add:
     case Subtract:
     case Multiply:
