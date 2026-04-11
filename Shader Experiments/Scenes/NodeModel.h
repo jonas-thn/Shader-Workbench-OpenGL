@@ -20,6 +20,36 @@ enum NodeType
     Mod
 };
 
+inline constexpr const char* nodeTitles[] = 
+{
+    "Master", "Time", "Color", "Add", "Subtract", "Multiply", "Value", "Sin", "Lerp", "Min", "Max", "Abs", "Mod"
+};
+
+struct MenuEntry 
+{
+    NodeType type;
+    const char* label;
+};
+
+inline constexpr MenuEntry inputNodes[] = 
+{
+    {Value, "Value Node"},
+    {Time, "Time Node"},
+    {Color, "Color Node"}
+};
+
+inline constexpr MenuEntry mathNodes[] ={
+    {Add, "Add Node"},
+    {Subtract, "Subtract Node"},
+    {Multiply, "Multiply Node"},
+    {Lerp, "Lerp Node"},
+    {Min, "Min Node"},
+    {Max, "Max Node"},
+    {Sin, "Sin Node"},
+    {Abs, "Abs Node"},
+    {Mod, "Mod Node"}
+};
+
 struct Link 
 {
     int id;

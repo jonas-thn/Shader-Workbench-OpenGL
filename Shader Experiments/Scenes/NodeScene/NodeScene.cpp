@@ -130,50 +130,13 @@ void NodeScene::DrawNode(Node& node)
     ImNodes::BeginNode(node.id);
     ImNodes::BeginNodeTitleBar();
 
-    switch (node.type)
+    if (node.type >= 0 && node.type < (sizeof(nodeTitles) / sizeof(nodeTitles[0]))) 
     {
-    case Master:
-        ImGui::TextUnformatted("Master");
-        break;
-    case Time:
-        ImGui::TextUnformatted("Time");
-        break;
-    case Color:
-		ImGui::TextUnformatted("Color");
-        break;
-    case Add:
-        ImGui::TextUnformatted("Add");
-        break;
-    case Subtract:
-        ImGui::TextUnformatted("Subtract");
-        break;
-    case Multiply:
-		ImGui::TextUnformatted("Mutliply");
-        break;
-    case Value:
-        ImGui::TextUnformatted("Value");
-        break;
-    case Sin:
-        ImGui::TextUnformatted("Sin");
-        break;
-    case Lerp:
-        ImGui::TextUnformatted("Lerp");
-        break;
-    case Min:
-        ImGui::TextUnformatted("Min");
-        break;
-    case Max:
-        ImGui::TextUnformatted("Max");
-        break;
-    case Abs:
-        ImGui::TextUnformatted("Abs");
-        break;
-    case Mod:
-        ImGui::TextUnformatted("Mod");
-        break;
-    default:
+        ImGui::TextUnformatted(nodeTitles[node.type]);
+    }
+    else 
+    {
         ImGui::TextUnformatted("NODE ERROR");
-        break;
     }
 
     ImNodes::EndNodeTitleBar();
@@ -249,67 +212,23 @@ void NodeScene::DrawNodePopup(bool& popupOpen)
     if (ImGui::BeginPopup("AddNodeMenu"))
     {
         ImGui::SeparatorText("Inputs");
-        if (ImGui::MenuItem("Value Node"))
+        for (const MenuEntry& entry : inputNodes)
         {
-            AddNode(Value);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Time Node"))
-        {
-            AddNode(Time);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Color Node"))
-        {
-            AddNode(Color);
-            popupOpen = false;
+            if (ImGui::MenuItem(entry.label))
+            {
+                AddNode(entry.type);
+                popupOpen = false;
+            }
         }
 
         ImGui::SeparatorText("Math");
-        if (ImGui::MenuItem("Add Node"))
+        for (const MenuEntry& entry : mathNodes)
         {
-            AddNode(Add);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Subtract Node"))
-        {
-            AddNode(Subtract);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Multiply Node"))
-        {
-            AddNode(Multiply);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Sin Node"))
-        {
-            AddNode(Sin);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Lerp Node"))
-        {
-            AddNode(Lerp);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Min Node"))
-        {
-            AddNode(Min);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Max Node"))
-        {
-            AddNode(Max);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Abs Node"))
-        {
-            AddNode(Abs);
-            popupOpen = false;
-        }
-        if (ImGui::MenuItem("Mod Node"))
-        {
-            AddNode(Mod);
-            popupOpen = false;
+            if (ImGui::MenuItem(entry.label))
+            {
+                AddNode(entry.type);
+                popupOpen = false;
+            }
         }
 
         ImGui::Spacing();
